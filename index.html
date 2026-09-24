@@ -255,7 +255,7 @@ function drawEffect(text, drawBackground=true){
     ctx.beginPath();ctx.roundRect(x,y,w,h,16);ctx.fillStyle="rgba(0,0,0,.72)";ctx.fill();
   }
   if(!text)return;
-  const fontSize=26,lineHeight=38,startX=x,maxWidth=w;
+  const fontSize=26,lineHeight=38,startX=x+18,maxWidth=w-36;
   ctx.font=`700 ${fontSize}px "Noto Serif KR","Batang",serif`;
   ctx.textAlign="left";ctx.textBaseline="alphabetic";
   let cy = isSpecial ? 205 : 782;
@@ -281,13 +281,18 @@ function drawStats(){
   ctx.lineWidth=3.5;
   ctx.strokeStyle="#111";
 
-  if(state.type === "소환수" || state.type === "장비") {
-    if(state.attack){
-      drawStatText(state.attack, 405, 704);
-    }
+  if(state.type === "소환수" && state.attack){
+    // 소환수 프레임: 중앙의 주먹 아이콘 오른쪽
+    drawStatText(state.attack, 405, 704);
+  }
+
+  if(state.type === "장비" && state.attack){
+    // 장비 프레임: 왼쪽에 있는 주먹 아이콘 오른쪽
+    drawStatText(state.attack, 123, 704);
   }
 
   if(state.type === "소환수" && state.cost){
+    // 소환수 프레임: 오른쪽 에너지 아이콘 오른쪽
     drawStatText(state.cost, 592, 704);
   }
 }
