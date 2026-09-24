@@ -248,9 +248,9 @@ function drawEffect(text, drawBackground=true){
   /* 프레임별 효과 영역: w/s는 하단 흰색 박스, m은 중앙 검정 영역 */
   const isSpecial = state.type === "특수 카드";
   const x = isSpecial ? 40 : 19;
-  const y = isSpecial ? 165 : 748;
+  const y = isSpecial ? 620 : 748;
   const w = isSpecial ? 616 : 628;
-  const h = isSpecial ? 805 : 210;
+  const h = isSpecial ? 360 : 210;
   if(drawBackground){
     ctx.beginPath();ctx.roundRect(x,y,w,h,16);ctx.fillStyle="rgba(0,0,0,.72)";ctx.fill();
   }
@@ -258,7 +258,7 @@ function drawEffect(text, drawBackground=true){
   const fontSize=26,lineHeight=38,startX=x+18,maxWidth=w-36;
   ctx.font=`700 ${fontSize}px "Noto Serif KR","Batang",serif`;
   ctx.textAlign="left";ctx.textBaseline="alphabetic";
-  let cy = isSpecial ? 205 : 782;
+  let cy = isSpecial ? 665 : 782;
   for(const paragraph of text.split("\n")){
     if(!paragraph){cy+=lineHeight;continue;}
     let line="";
