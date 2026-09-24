@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>커스텀 카드 메이커</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,"Noto Sans KR",sans-serif;background:#11131a;color:#eee}.app{display:grid;grid-template-columns:minmax(330px,430px) 1fr;min-height:100vh}.panel{padding:22px;background:#181b24;border-right:1px solid #303441;overflow-y:auto}h1{margin:0 0 6px;font-size:24px}.sub{color:#9fa6b8;font-size:13px;margin-bottom:20px}.group{margin-bottom:16px;padding:14px;border:1px solid #303441;border-radius:12px;background:#20232d}.group h2{font-size:14px;margin:0 0 12px;color:#fff}label{display:block;font-size:12px;color:#b9bfd0;margin:10px 0 6px}input[type=text],textarea,select{width:100%;border:1px solid #414756;border-radius:8px;background:#11141b;color:#fff;padding:10px 11px;outline:none}input[type=text]:focus,textarea:focus,select:focus{border-color:#6c8cff}textarea{resize:vertical;min-height:120px;line-height:1.55}input[type=file]{width:100%;font-size:12px;color:#cbd0dc}.frame-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.frame-box{padding:9px;border:1px solid #414756;border-radius:9px;background:#151820}.frame-key{display:block;text-align:center;font-weight:700;margin-bottom:7px}button{border:0;border-radius:9px;padding:11px 14px;background:#586ee8;color:#fff;font-weight:700;cursor:pointer}button:hover{filter:brightness(1.1)}.secondary{background:#353b4b}.buttons{display:flex;gap:8px;flex-wrap:wrap}.hint{font-size:11px;line-height:1.5;color:#8f97aa;margin-top:8px}.preview{min-width:0;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;background:radial-gradient(circle at center,#252b39 0,#151821 42%,#0d0f14 100%)}.preview-title{margin-bottom:12px;color:#aeb5c7;font-size:13px}#cardCanvas{width:min(65vw,696px);height:auto;max-height:88vh;object-fit:contain;box-shadow:0 20px 60px #000b;border-radius:2px}.status{margin-top:12px;font-size:12px;color:#8f97aa;text-align:center}@media(max-width:900px){.app{grid-template-columns:1fr}.panel{border-right:0;border-bottom:1px solid #303441}#cardCanvas{width:min(94vw,696px)}}
+</style>
+</head>
+<body>
+<div class="app">
+<aside class="panel">
+<h1>커스텀 카드 메이커</h1>
+<div class="sub">696 × 1016px 카드 규격 / 실시간 미리보기</div>
+<section class="group"><h2>카드 기본 정보</h2>
+<label for="cardType">카드 종류</label><select id="cardType"><option value="소환수">소환수</option><option value="장비">장비</option><option value="특수 카드">특수 카드</option></select>
+<label for="cardName">카드 이름</label><input id="cardName" type="text" placeholder="예: 도깨비">
+<label for="theme">카드 테마군</label><input id="theme" type="text" placeholder="예: 도깨비">
+<label for="effect">카드 효과</label><textarea id="effect" placeholder="카드의 효과를 입력하세요.&#10;줄바꿈도 그대로 반영됩니다."></textarea>
+</section>
+<section class="group"><h2>카드 이미지</h2><input id="artFile" type="file" accept="image/*"><div class="hint">가운데 일러스트 영역에 들어갈 이미지를 선택하세요. 이미지가 비율에 맞게 자동 크롭됩니다.</div></section>
+<section class="group"><h2>카드 프레임 이미지</h2>
+<div class="frame-row"><div class="frame-box"><span class="frame-key">w</span><input id="frameW" type="file" accept="image/*"></div><div class="frame-box"><span class="frame-key">s</span><input id="frameS" type="file" accept="image/*"></div><div class="frame-box"><span class="frame-key">m</span><input id="frameM" type="file" accept="image/*"></div></div>
+<label for="frameSelect">현재 사용할 프레임</label><select id="frameSelect"><option value="w">w</option><option value="s">s</option><option value="m">m</option></select>
+<div class="hint">코드 내부 프레임 이미지 정의는 <b>w / s / m</b>으로 고정되어 있습니다. 투명 PNG 프레임을 권장합니다.</div>
+</section>
+<section class="group"><h2>이미지 정의</h2><div class="hint"><b>FRAME_IMAGES.w</b> / <b>FRAME_IMAGES.s</b> / <b>FRAME_IMAGES.m</b>로 프레임을 관리합니다. 파일 업로드 시 자동으로 연결됩니다.</div></section>
+<section class="group"><h2>내보내기</h2><div class="buttons"><button id="downloadBtn">PNG 저장</button><button id="resetBtn" class="secondary">초기화</button></div><div class="hint">완성된 카드는 696 × 1016px PNG로 저장됩니다.</div></section>
+</aside>
+<main class="preview"><div class="preview-title">카드 미리보기</div><canvas id="cardCanvas" width="696" height="1016"></canvas><div class="status" id="status">카드 정보를 입력하면 바로 반영됩니다.</div></main>
+</div>
+<script>
+/* 프레임 이미지 정의: 사용자가 넣을 값은 w / s / m */
+const FRAME_IMAGES={w:"",s:"",m:""};
+let CARD_ART_IMAGE="";
+const state={type:"소환수",name:"",theme:"",effect:"",frame:"w"};
+const W=696,H=1016,canvas=document.getElementById("cardCanvas"),ctx=canvas.getContext("2d");
+const $=id=>document.getElementById(id);
+function loadImage(src){return new Promise((resolve,reject)=>{if(!src)return resolve(null);const img=new Image();img.onload=()=>resolve(img);img.onerror=reject;img.src=src})}
+function readFile(file){return new Promise((resolve,reject)=>{if(!file)return resolve("");const r=new FileReader();r.onload=()=>resolve(r.result);r.onerror=reject;r.readAsDataURL(file)})}
+function drawCover(img,x,y,w,h){if(!img)return;const scale=Math.max(w/img.width,h/img.height),sw=w/scale,sh=h/scale,sx=(img.width-sw)/2,sy=(img.height-sh)/2;ctx.drawImage(img,sx,sy,sw,sh,x,y,w,h)}
+function drawTitle(text){if(!text)return;let size=57;if(text.length>=8)size=48;if(text.length>=10)size=43;ctx.font=`${size}px "Noto Serif KR","Batang","Times New Roman",serif`;ctx.textAlign="left";ctx.textBaseline="middle";ctx.fillStyle="#fff";ctx.shadowColor="rgba(0,0,0,.35)";ctx.shadowBlur=2;ctx.fillText(text,28,78);ctx.shadowBlur=0}
+function drawTheme(text){ctx.beginPath();ctx.arc(614,77,56.5,0,Math.PI*2);ctx.fillStyle="rgba(0,105,112,.96)";ctx.fill();if(!text)return;let size=35;if(text.length>=5)size=29;if(text.length>=7)size=25;ctx.font=`700 ${size}px Arial,"Noto Sans KR",sans-serif`;ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#fff";ctx.fillText(text,614,78)}
+function drawEffect(text){const x=19,y=696,w=654,h=291;ctx.beginPath();ctx.roundRect(x,y,w,h,16);ctx.fillStyle="rgba(0,0,0,.72)";ctx.fill();if(!text)return;const fontSize=26,lineHeight=38,startX=40,maxWidth=610;ctx.font=`700 ${fontSize}px "Noto Serif KR","Batang",serif`;ctx.textAlign="left";ctx.textBaseline="alphabetic";let cursorY=748;for(const p of text.split("\n")){if(p===""){cursorY+=lineHeight;continue}let line="";for(const ch of p){const test=line+ch;if(ctx.measureText(test).width>maxWidth&&line){drawEffectLine(line,startX,cursorY);cursorY+=lineHeight;line=ch}else line=test}if(line){drawEffectLine(line,startX,cursorY);cursorY+=lineHeight}}}
+function drawEffectLine(text,x,y){ctx.lineWidth=3;ctx.strokeStyle="#111";ctx.strokeText(text,x,y);ctx.fillStyle="#fff";ctx.fillText(text,x,y)}
+async function render(){ctx.clearRect(0,0,W,H);ctx.fillStyle="#18121f";ctx.fillRect(0,0,W,H);const art=await loadImage(CARD_ART_IMAGE);if(art)drawCover(art,0,0,W,H);const frame=await loadImage(FRAME_IMAGES[state.frame]);if(frame)ctx.drawImage(frame,0,0,W,H);if(!frame){ctx.beginPath();ctx.roundRect(15,22,520,109,7);ctx.fillStyle="rgba(0,0,0,.55)";ctx.fill();drawTheme(state.theme);drawEffect(state.effect)}else{drawTitle(state.name);drawTheme(state.theme);drawEffect(state.effect)}if(!frame)drawTitle(state.name);$("status").textContent=`${state.type} · 프레임 ${state.frame} · ${state.name||"이름 없음"}`}
+function bindText(id,key){$(id).addEventListener("input",()=>{state[key]=$(id).value;render()})}
+bindText("cardType","type");bindText("cardName","name");bindText("theme","theme");bindText("effect","effect");
+$("frameSelect").addEventListener("change",()=>{state.frame=$("frameSelect").value;render()});
+async function bindImageInput(id,callback){$(id).addEventListener("change",async e=>{const f=e.target.files[0];if(!f)return;callback(await readFile(f));render()})}
+bindImageInput("artFile",d=>{CARD_ART_IMAGE=d});bindImageInput("frameW",d=>{FRAME_IMAGES.w=d;state.frame="w";$("frameSelect").value="w"});bindImageInput("frameS",d=>{FRAME_IMAGES.s=d;state.frame="s";$("frameSelect").value="s"});bindImageInput("frameM",d=>{FRAME_IMAGES.m=d;state.frame="m";$("frameSelect").value="m"});
+$("downloadBtn").addEventListener("click",()=>{const a=document.createElement("a"),safe=(state.name||"custom-card").replace(/[\\/:*?"<>|]/g,"_");a.download=`${safe}.png`;a.href=canvas.toDataURL("image/png");a.click()});
+$("resetBtn").addEventListener("click",()=>{state.type="소환수";state.name="";state.theme="";state.effect="";state.frame="w";CARD_ART_IMAGE="";FRAME_IMAGES.w="";FRAME_IMAGES.s="";FRAME_IMAGES.m="";$("cardType").value="소환수";$("cardName").value="";$("theme").value="";$("effect").value="";$("frameSelect").value="w";document.querySelectorAll('input[type="file"]').forEach(x=>x.value="");render()});
+render();
+</script>
+</body>
+</html>
