@@ -199,10 +199,49 @@ function drawTheme(text, drawBackground=true){
     ctx.fillStyle="rgba(0,105,112,.96)";ctx.fill();
   }
   if(!text)return;
-  let size=35;if(text.length>=5)size=29;if(text.length>=7)size=25;
+
+  /*
+   * 테마군 표시 규칙
+   * 1) "/"가 있으면 슬래시 위치에서 줄을 나눕니다.
+   *    예: "도깨비/화염" ->
+   *         도깨비
+   *         화염
+   * 2) 슬래시는 화면에 표시하지 않습니다.
+   * 3) 슬래시가 없더라도 한 줄의 폭이 원 안에 들어오도록
+   *    글자 크기를 자동으로 줄입니다.
+   */
+  let lines=text.split('/').map(v=>v.trim()).filter(Boolean);
+  if(!lines.length)return;
+
+  const maxWidth=92;
+  const maxHeight=94;
+  let size=35;
+  const minSize=17;
+
+  function fits(fontSize){
+    ctx.font=`700 ${fontSize}px Arial,"Noto Sans KR",sans-serif`;
+    const widths=lines.map(line=>ctx.measureText(line).width);
+    const lineHeight=fontSize*1.05;
+    const totalHeight=lineHeight*lines.length;
+    return Math.max(...widths)<=maxWidth && totalHeight<=maxHeight;
+  }
+
+  while(size>minSize && !fits(size))size--;
+
   ctx.font=`700 ${size}px Arial,"Noto Sans KR",sans-serif`;
-  ctx.textAlign="center";ctx.textBaseline="middle";ctx.fillStyle="#fff";
-  ctx.fillText(text,614,78);
+  ctx.textAlign="center";
+  ctx.textBaseline="middle";
+  ctx.fillStyle="#fff";
+  ctx.lineWidth=1.5;
+  ctx.strokeStyle="rgba(0,0,0,.35)";
+
+  const lineHeight=size*1.05;
+  const startY=77-((lines.length-1)*lineHeight)/2;
+  lines.forEach((line,i)=>{
+    const y=startY+i*lineHeight;
+    ctx.strokeText(line,614,y);
+    ctx.fillText(line,614,y);
+  });
 }
 
 function drawEffect(text, drawBackground=true){
@@ -229,11 +268,12 @@ function drawEffect(text, drawBackground=true){
 
 /* 프레임에 이미 들어 있는 주먹/에너지 아이콘 오른쪽의 수치 */
 function drawStats(){
-  const fontSize=26;
+  /* 아이콘 높이에 맞춘 큰 수치 */
+  const fontSize=42;
   ctx.font=`700 ${fontSize}px "Noto Serif KR","Batang",serif`;
   ctx.textBaseline="middle";
   ctx.fillStyle="#fff";
-  ctx.lineWidth=3;
+  ctx.lineWidth=3.5;
   ctx.strokeStyle="#111";
 
   if(state.type === "소환수" || state.type === "장비") {
