@@ -277,7 +277,7 @@ function drawStats(){
   const fontSize=60;
   ctx.font=`900 ${fontSize}px "Arial Black","Trebuchet MS",Arial,sans-serif`;
   ctx.textBaseline="middle";
-  ctx.fillStyle="#000";
+  ctx.fillStyle="#fff";
   ctx.lineWidth=3.5;
   ctx.strokeStyle="#111";
 
@@ -304,7 +304,7 @@ function drawStatText(text,x,y){
 }
 function drawEffectLine(text,x,y){
   ctx.lineWidth=3;ctx.strokeStyle="#111";ctx.strokeText(text,x,y);
-  ctx.fillStyle="#fff";ctx.fillText(text,x,y);
+  ctx.fillStyle="#000";ctx.fillText(text,x,y);
 }
 
 async function render(){
