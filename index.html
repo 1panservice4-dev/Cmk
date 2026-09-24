@@ -245,15 +245,20 @@ function drawTheme(text, drawBackground=true){
 }
 
 function drawEffect(text, drawBackground=true){
-  const x=19,y=696,w=654,h=291;
+  /* 프레임별 효과 영역: w/s는 하단 흰색 박스, m은 중앙 검정 영역 */
+  const isSpecial = state.type === "특수 카드";
+  const x = isSpecial ? 40 : 19;
+  const y = isSpecial ? 165 : 748;
+  const w = isSpecial ? 616 : 628;
+  const h = isSpecial ? 805 : 210;
   if(drawBackground){
     ctx.beginPath();ctx.roundRect(x,y,w,h,16);ctx.fillStyle="rgba(0,0,0,.72)";ctx.fill();
   }
   if(!text)return;
-  const fontSize=26,lineHeight=38,startX=40,maxWidth=610;
+  const fontSize=26,lineHeight=38,startX=x,maxWidth=w;
   ctx.font=`700 ${fontSize}px "Noto Serif KR","Batang",serif`;
   ctx.textAlign="left";ctx.textBaseline="alphabetic";
-  let cy=748;
+  let cy = isSpecial ? 205 : 782;
   for(const paragraph of text.split("\n")){
     if(!paragraph){cy+=lineHeight;continue;}
     let line="";
@@ -268,9 +273,9 @@ function drawEffect(text, drawBackground=true){
 
 /* 프레임에 이미 들어 있는 주먹/에너지 아이콘 오른쪽의 수치 */
 function drawStats(){
-  /* 아이콘 높이에 맞춘 큰 수치 */
-  const fontSize=42;
-  ctx.font=`700 ${fontSize}px "Noto Serif KR","Batang",serif`;
+  /* 아이콘과 균형이 맞도록 굵은 숫자 전용 폰트 사용 */
+  const fontSize=43;
+  ctx.font=`900 ${fontSize}px "Arial Black","Trebuchet MS",Arial,sans-serif`;
   ctx.textBaseline="middle";
   ctx.fillStyle="#fff";
   ctx.lineWidth=3.5;
@@ -278,12 +283,12 @@ function drawStats(){
 
   if(state.type === "소환수" || state.type === "장비") {
     if(state.attack){
-      drawStatText(state.attack, 408, 704);
+      drawStatText(state.attack, 405, 704);
     }
   }
 
   if(state.type === "소환수" && state.cost){
-    drawStatText(state.cost, 595, 704);
+    drawStatText(state.cost, 592, 704);
   }
 }
 
