@@ -258,7 +258,7 @@ function drawEffect(text, drawBackground=true){
   const fontSize=26,lineHeight=38,startX=x+18,maxWidth=w-36;
   ctx.font=`700 ${fontSize}px "Noto Serif KR","Batang",serif`;
   ctx.textAlign="left";ctx.textBaseline="alphabetic";
-  let cy = isSpecial ? 725 : 782;
+  let cy = isSpecial ? 728 : 782;
   for(const paragraph of text.split("\n")){
     if(!paragraph){cy+=lineHeight;continue;}
     let line="";
