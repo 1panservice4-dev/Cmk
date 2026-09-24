@@ -189,7 +189,7 @@ function drawTitle(text){
   if(text.length>=10)size=43;
   ctx.font=`${size}px "Noto Serif KR","Batang","Times New Roman",serif`;
   ctx.textAlign="left";ctx.textBaseline="middle";
-  ctx.fillStyle="#fff";ctx.shadowColor="rgba(0,0,0,.4)";ctx.shadowBlur=2;
+  ctx.fillStyle="#000";ctx.shadowColor="rgba(0,0,0,.4)";ctx.shadowBlur=2;
   ctx.fillText(text,28,78);ctx.shadowBlur=0;
 }
 
@@ -304,7 +304,7 @@ function drawStatText(text,x,y){
 }
 function drawEffectLine(text,x,y){
   ctx.lineWidth=3;ctx.strokeStyle="#111";ctx.strokeText(text,x,y);
-  ctx.fillStyle="#000";ctx.fillText(text,x,y);
+  ctx.fillStyle="#fff";ctx.fillText(text,x,y);
 }
 
 async function render(){
