@@ -405,6 +405,7 @@ function setArtCenter(){
 $("cardType").addEventListener("change",()=>{state.type=$("cardType").value;updateStatInputs();render()});
 $("cardName").addEventListener("input",()=>{state.name=$("cardName").value;render()});
 $("theme").addEventListener("input",()=>{state.theme=$("theme").value;render()});
+$("level").addEventListener("change",()=>{state.level=$("level").value;render();});
 $("effect").addEventListener("input",()=>{state.effect=$("effect").value;render()});
 $("attack").addEventListener("input",()=>{state.attack=$("attack").value;render()});
 $("cost").addEventListener("input",()=>{state.cost=$("cost").value;render()});
