@@ -382,6 +382,7 @@ async function render(){
     /* 프레임의 빈 영역은 건드리지 않고 글자만 올립니다. */
     drawTitle(state.name);
     drawTheme(state.theme,false);
+    drawLevel();
     drawEffect(state.effect,false);
     drawStats();
   }else{
