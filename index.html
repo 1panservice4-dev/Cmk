@@ -245,9 +245,16 @@ function drawTheme(text, drawBackground=true){
   ctx.font=`700 ${size}px Arial,"Noto Sans KR",sans-serif`;
   ctx.textAlign="center";
   ctx.textBaseline="middle";
-  ctx.fillStyle="#fff";
-  ctx.lineWidth=1.5;
-  ctx.strokeStyle="rgba(0,0,0,.35)";
+   if(state.type === "소환수"){
+     ctx.fillStyle="#ffd54a";      // 소환수 카드군
+   }else if(state.type === "장비"){
+     ctx.fillStyle="#66d9ff";      // 장비 카드군
+   }else{
+     ctx.fillStyle="#fff";         // 특수 카드군
+   }
+   
+   ctx.lineWidth=1.5;
+   ctx.strokeStyle="rgba(0,0,0,.35)";
 
   const lineHeight=size*1.05;
   const startY=77-((lines.length-1)*lineHeight)/2;
