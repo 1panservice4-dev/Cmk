@@ -224,6 +224,27 @@ function drawTitle(text){
   ctx.shadowBlur=0;
 }
 
+function drawLevel(){
+  if(state.type !== "소환수")return;
+
+  const text=`Lv.${state.level}`;
+
+  ctx.font=`italic 700 30px "Nanum Myeongjo","Noto Serif KR","Batang",serif`;
+  ctx.textAlign="left";
+  ctx.textBaseline="middle";
+
+  ctx.fillStyle="#fff";
+  ctx.lineWidth=2.5;
+  ctx.strokeStyle="rgba(0,0,0,.7)";
+
+  // 카드 효과 박스 바로 위 작은 박스의 왼쪽
+  const x=35;
+  const y=728;
+
+  ctx.strokeText(text,x,y);
+  ctx.fillText(text,x,y);
+}
+
 function drawTheme(text, drawBackground=true){
   if(drawBackground){
     ctx.beginPath();ctx.arc(614,77,56.5,0,Math.PI*2);
