@@ -412,16 +412,27 @@ $("cost").addEventListener("input",()=>{state.cost=$("cost").value;render()});
 
 function updateStatInputs(){
   const type=state.type;
+
   const attackLabel=$("attackLabel");
   const costLabel=$("costLabel");
   const attack=$("attack");
   const cost=$("cost");
+
+  const levelLabel=$("levelLabel");
+  const level=$("level");
+
   const showAttack=(type==="소환수"||type==="장비");
   const showCost=(type==="소환수");
+  const showLevel=(type==="소환수");
+
   attackLabel.style.display=showAttack?"block":"none";
   attack.style.display=showAttack?"block":"none";
+
   costLabel.style.display=showCost?"block":"none";
   cost.style.display=showCost?"block":"none";
+
+  levelLabel.style.display=showLevel?"block":"none";
+  level.style.display=showLevel?"block":"none";
 }
 
 
